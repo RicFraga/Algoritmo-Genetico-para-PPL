@@ -1,31 +1,51 @@
-function init() {
-	console.log(":3");
+function init() {	
+
+	var res = new Array(3);
+
+	// 2x + 3y <= 100
+	res[0] = new restriction([2, 3], "<=", 100);
+	// x + 2y <= 120
+	res[1] = new restriction([1, 2], "<=", 120);
+	// y >= 30
+	res[2] = new restriction([0, 1], ">=", 30);
+
+	l = calculateLimits(res);
+	console.log(l);
 
 }
 
-function calculateLimits(restrictions) {
+// Esta función se encarga de calcular los límites de generación de números aleatorios
+function calculateLimits(restrictions) {	
 	var coef = restrictions[0].coeficients.length;
-	var limits = new Array(2 * coef);
+	var limits = [];
 	var comp;
-	var min = 999999999999999999;
-	var max = -1;
+	var min;
+	var max;
 
-	for(let i = 0; i < restrictions.length; i++) {
-		for(let j = 0; j < coef; j++) {
-			if(restrictions[i].coeficients[j] != 0) {
-				comp = restrictions[i].target / restrictions[i].coeficients[j];
+	for(let i = 0; i < coef; i++) {
 
-				if(comp < min) {
-					min = comp;
-				}
+		min = 999999999999999999;
+		max = -1;
 
-				if(comp > max) {
-					max = comp;
-				}
+		for(let j = 0; j < restrictions.length; j++) {
+			if(restrictions[j].coeficients[i] == 0) {
+				comp = 0;
 			}
-		}
+			
+			else if(restrictions[j].coeficients[i] != 0) {
+				comp = restrictions[j].target / restrictions[j].coeficients[i];
+			}			
 
-		limits[i] = min;
-		limits[i + 1] = max;
+			if(comp < min)			
+				min = comp;				
+
+			if(comp > max)			
+				max = comp;
+		}
+		
+		limits.push(min);
+		limits.push(max);
 	}
+
+	return limits;
 }
