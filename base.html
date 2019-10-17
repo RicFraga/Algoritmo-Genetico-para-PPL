@@ -1,7 +1,7 @@
 <html>
 <head>
-  	<meta charset="UTF-8">
-  	<title>Algoritmo Genético para PPL</title>
+  	<meta charset="UTF-8"></meta>
+  	<title>Algoritmo Genético para PPL</title>  	
   	<script src="DNA.js"></script>
   	<script src="population.js"></script>
   	<script src="restriction.js"></script>
@@ -10,7 +10,25 @@
 </head>
 <body>
 
-	<h1>Método Cuantitativos para la Toma de Decisiones</h1>
+	<h2>Métodos Cuantitativos para la Toma de Decisiones</h2>
+
+	<h4>Número de variables</h4>
+	<input id = "variables" type="numeric"></input>
+
+	<h4>Número de restricciones</h4>
+	<input id = "rest" type="numeric"></input>
+
+	<h4>Tamaño de la población</h4>
+	<input id = "pob" type="numeric"></input><br></br>
+
+	<div id="restricciones">
+		<!-- 
+			Aquí se muestran las restricciones
+		-->
+	</div>
+
+	<button onclick="loadDoc();">Ingresar restricciones</button>
+
 	<button onclick="init();">Iniciar</button>
 
 </body>
