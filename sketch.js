@@ -1,6 +1,9 @@
+var cantidad_individuos = 1;
+var cantidad_restricciones = 3;
+
 function init() {	
 
-	var res = new Array(3);
+	var res = new Array(cantidad_restricciones);
 
 	// 2x + 3y <= 100
 	res[0] = new restriction([2, 3], "<=", 100);
@@ -9,9 +12,16 @@ function init() {
 	// y >= 30
 	res[2] = new restriction([0, 1], ">=", 30);
 
-	l = calculateLimits(res);
-	console.log(l);
+	// Calculamos los límites de generación de valores aleatorios de las variables
+	var limites = calculateLimits(res);
+	console.log(limites);
 
+	// Generamos la población
+	var poblacion = new population(2, cantidad_individuos, limites);
+
+	poblacion.show();
+		
+	
 }
 
 // Esta función se encarga de calcular los límites de generación de números aleatorios
