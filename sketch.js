@@ -14,14 +14,15 @@ function init() {
 
 	// Calculamos los límites de generación de valores aleatorios de las variables
 	var limites = calculateLimits(res);
-	console.log(limites);
+	
+	//console.log(limites);
 
 	// Generamos la población
 	var poblacion = new population(2, cantidad_individuos, limites);
 
 	poblacion.show();
-		
-	
+	poblacion.showBinary();
+
 }
 
 // Esta función se encarga de calcular los límites de generación de números aleatorios
