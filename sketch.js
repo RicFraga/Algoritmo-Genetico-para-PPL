@@ -21,11 +21,7 @@ function init() {
 		ofc = "of";
 	}
 
-	var fo = new objectiveFunction(values, document.getElementById("objective").value);
-
-	console.log("FO");
-	console.log(values);
-	console.log(document.getElementById("objective").value);
+	var fo = new objectiveFunction(values, document.getElementById("objective").value);	
 
 	values = [];
 	// Obtenemos las restricciones
@@ -41,24 +37,82 @@ function init() {
 		typ += i;
 		type = document.getElementById(typ).value;
 		targ += i;
-		target = parseInt((document.getElementById(targ)).value);
-
-		console.log(values);
+		target = parseInt((document.getElementById(targ)).value);		
 
 		res.push(new restriction(values, type, target));
 	}
 
 	// Calculamos los límites de generación de valores aleatorios de las variables
-	var limites = calculateLimits(res);
-
-	console.log(limites);	
+	var limites = calculateLimits(res);	
 
 	// Generamos la población
 	var poblacion = new population(cantidad_variables, cantidad_individuos, limites);
+	
+	// Evaluamos las restricciones en la población
+	for(let i = 0; i < cantidad_restricciones; i++) {
+		for(let j = 0; j < cantidad_individuos; j++) {
+			poblacion.population[j].evaluateRest(res[i]);
+		}
+	}
 
-	//poblacion.show();
-	//poblacion.showBinary();
+	var best_obtained;	
 
+	if(fo.objective == "Max") {
+		best_obtained = -1;
+	}
+
+	else if(fo.objective == "Min")
+		best_obtained = 999999999999999;
+
+	// Evaluamos la f.o. en la población
+	for(let i = 0; i < cantidad_individuos; i++) {		
+		if(poblacion.population[i].check == true) {
+			poblacion.population[i].evaluateOF(fo);
+
+			if(fo.objective == "Max") {
+				if(poblacion.population[i].obtained > best_obtained) {					
+					best_obtained = poblacion.population[i].obtained;					
+				}
+			}
+
+			else if(fo.objective == "Min") {
+				if(poblacion.population[i].obtained < best_obtained)
+					best_obtained = poblacion.population[i].obtained;
+			}			
+		}
+	}
+
+	console.log(best_obtained);
+
+	/*  Para calcular la aportación al fitness de cada individuo se revisa si el objetivo de la f.o.
+		es maximizar o minimizar, si se trata de maximizar se toma al especimen que obtuvo la mayor
+		evaluación de la f.o. y se le suma 1, con base en el mayor se suma proporcionalmente al fintess
+		de acuerdo a su valor obtenido de la f.o.
+		Se hace el mismo razonamiento para la minimización pero tomando al menor	
+	*/
+	for(let i = 0; i < cantidad_individuos; i++) {
+		if(poblacion.population[i].check == true) {
+			if(fo.objective == "Max") {
+				poblacion.population[i].fitness += poblacion.population[i].getObtained() / best_obtained;
+			}
+
+			else if(fo.objective == "Min") {
+				poblacion.population[i].fitness += best_obtained / poblacion.population[i].getObtained();
+			}
+		}
+	}
+
+	
+
+
+	// Mostramos a la población, el fitness y el valor obtenido de la fo de cada especimen
+	for(let i = 0; i < cantidad_individuos; i++)
+	{
+		poblacion.population[i].show();
+		console.log(poblacion.population[i].getFitness());
+		console.log(poblacion.population[i].getObtained());
+		console.log("--------------------------------------");
+	}
 }
 
 // Esta función se encarga de calcular los límites de generación de números aleatorios
@@ -111,7 +165,7 @@ function calculateLimits(restrictions) {
 	return limits;
 }
 
-// AJAX
+// AJAX para modificar el html
 function loadDoc() {
   	var xhttp = new XMLHttpRequest();
   	xhttp.onreadystatechange = function() {
