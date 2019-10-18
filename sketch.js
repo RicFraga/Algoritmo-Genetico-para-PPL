@@ -5,27 +5,37 @@ function init() {
 	var cantidad_restricciones = parseInt(document.getElementById("rest").value);
 	var cantidad_variables = parseInt(document.getElementById("variables").value);
 
-	var res = new Array(cantidad_restricciones);
+	var res = [];
 	var values = [];
 	var type;
 	var typ;
 	var targ;
 	var target;
+	var ofc;
 
+	// Obtenemos la función objetivo
+	for(let i = 0; i < cantidad_variables; i++) {
+		ofc = "of";
+		ofc += i;
+		values.push(parseInt((document.getElementById(ofc)).value));
+		ofc = "of";
+	}
 
+	var fo = new objectiveFunction(values, document.getElementById("objective").value);
+
+	console.log("FO");
+	console.log(values);
+	console.log(document.getElementById("objective").value);
+
+	values = [];
+	// Obtenemos las restricciones
 	for(let i = 0; i < cantidad_restricciones; i++) {
 		values = [];
 		typ = "t";
 		targ = "tr";
 
-		for(let j = 0; j < cantidad_variables; j++) {
-			if(i > 0) {
-				values.push(parseInt((document.getElementById(j + cantidad_variables)).value));
-			}
-
-			else {
-				values.push(parseInt((document.getElementById(j)).value));
-			}		
+		for(let j = 0; j < cantidad_variables; j++) {			
+			values.push(parseInt((document.getElementById(j + (cantidad_variables * i))).value));							
 		}
 
 		typ += i;
@@ -34,16 +44,14 @@ function init() {
 		target = parseInt((document.getElementById(targ)).value);
 
 		console.log(values);
-		console.log(type);
-		console.log(target);
 
-		res[i] = new restriction(values, type, target);
+		res.push(new restriction(values, type, target));
 	}
 
 	// Calculamos los límites de generación de valores aleatorios de las variables
 	var limites = calculateLimits(res);
 
-	console.log(limites);
+	console.log(limites);	
 
 	// Generamos la población
 	var poblacion = new population(cantidad_variables, cantidad_individuos, limites);
@@ -108,7 +116,7 @@ function loadDoc() {
   	var xhttp = new XMLHttpRequest();
   	xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-    	obtRest(this);
+    	obtRestandOF(this);
     }
   };
 
@@ -117,15 +125,85 @@ function loadDoc() {
 }
 
 // Función para mostrar campos para obtener restricciones
-function obtRest(xml) {
+function obtRestandOF(xml) {
   	var cantidad_restricciones = parseInt(document.getElementById("rest").value);
   	var cantidad_variables = parseInt(document.getElementById("variables").value);
   	var xmlDoc = xml.responseXML;	
 	var et = "";
 	var input_id = 0;								// identificador de los input
-	var type_id = "t";								// identificador de los objetivos
-	var target_id = "tr";							// identificador de los
+	var type_id = "t";								// identificador de los tipos
+	var target_id = "tr";							// identificador de los objetivos	
+	var ofvalues = "of";							// identificador de los coeficientes de la f.o.
+	var aux = 0;
 
+	et += "<h4>Función Objetivo</h4>";
+
+	// Obtenemos la función objetivo
+	if(cantidad_variables == 1) {
+		et += "<p>a<input type='numeric' id =";
+		et += ofvalues + aux;		
+		et += ">";
+	}
+
+	else if(cantidad_variables == 2) {
+		et += "<p>a<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">b<input type='numeric' id =";
+		et += ofvalues + aux;		
+		et += ">";
+	}
+
+	else if(cantidad_variables == 3) {
+		et += "<p>a<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">b<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">c<input type='numeric' id =";
+		et += ofvalues + aux;		
+		et += ">";
+	}
+
+	else if(cantidad_variables == 4) {
+		et += "<p>a<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">b<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">c<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">d<input type='numeric' id =";
+		et += ofvalues + aux;		
+		et += ">";
+	}
+
+	else if(cantidad_variables == 5) {
+		et += "<p>a<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">b<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">c<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">d<input type='numeric' id =";
+		et += ofvalues + aux;
+		aux++;
+		et += ">e<input type='numeric' id =";
+		et += ofvalues + aux;
+		et += ">";		
+	}
+
+	et += "<select id='objective'><option value='Max'>Maximizar</option><option value='Min'>Minimizar</option></select>"
+
+	et += "<h4>Restricciones</h4>";	
+
+	// Obtenemos las restricciones
   	for(let i = 0; i < cantidad_restricciones; i++) {
 
   		if(cantidad_variables == 1) {
@@ -214,5 +292,6 @@ function obtRest(xml) {
   			et += "></p>";
   		}
   	}
+
   	document.getElementById("restricciones").innerHTML = et;
 }
