@@ -6,24 +6,50 @@ function init() {
 	var cantidad_variables = parseInt(document.getElementById("variables").value);
 
 	var res = new Array(cantidad_restricciones);
+	var values = [];
+	var type;
+	var typ;
+	var targ;
+	var target;
 
-	// 2x + 3y <= 100
-	res[0] = new restriction([2, 3], "<=", 100);
-	// x + 2y <= 120
-	res[1] = new restriction([1, 2], "<=", 120);
-	// y >= 30
-	res[2] = new restriction([0, 1], ">=", 30);
+
+	for(let i = 0; i < cantidad_restricciones; i++) {
+		values = [];
+		typ = "t";
+		targ = "tr";
+
+		for(let j = 0; j < cantidad_variables; j++) {
+			if(i > 0) {
+				values.push(parseInt((document.getElementById(j + cantidad_variables)).value));
+			}
+
+			else {
+				values.push(parseInt((document.getElementById(j)).value));
+			}		
+		}
+
+		typ += i;
+		type = document.getElementById(typ).value;
+		targ += i;
+		target = parseInt((document.getElementById(targ)).value);
+
+		console.log(values);
+		console.log(type);
+		console.log(target);
+
+		res[i] = new restriction(values, type, target);
+	}
 
 	// Calculamos los límites de generación de valores aleatorios de las variables
 	var limites = calculateLimits(res);
 
-	//console.log(limites);
+	console.log(limites);
 
 	// Generamos la población
 	var poblacion = new population(cantidad_variables, cantidad_individuos, limites);
 
-	poblacion.show();
-	poblacion.showBinary();
+	//poblacion.show();
+	//poblacion.showBinary();
 
 }
 
@@ -96,128 +122,95 @@ function obtRest(xml) {
   	var cantidad_variables = parseInt(document.getElementById("variables").value);
   	var xmlDoc = xml.responseXML;	
 	var et = "";
-	var id = 1;
-	var t = 1;
+	var input_id = 0;								// identificador de los input
+	var type_id = "t";								// identificador de los objetivos
+	var target_id = "tr";							// identificador de los
 
   	for(let i = 0; i < cantidad_restricciones; i++) {
 
   		if(cantidad_variables == 1) {
-  			et += "<p>a";
-  			et += i+1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">";
-  			et += "<select><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select>";
-  			et += "<input type='numeric' id =";
-  			et += t;
-  			t++;
+  			et += "<p>a<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += "><select id =";
+  			et += input_id;
+  			input_id++;
+  			et += "><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select><input type='numeric' id =";
+  			et += target_id + i;
   			et += "></p>";
   		}
 
   		else if(cantidad_variables == 2) {
-  			et += "<p>a";
-  			et += i+1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">b";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">";
-  			et += "<select><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select>";
-  			et += "<input type='numeric' id =";
-  			et += t;
-  			t++;
+  			et += "<p>a<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">b<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += "><select id =";
+  			et += type_id + i;
+  			et += "><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select><input type='numeric' id =";
+  			et += target_id + i;
   			et += "></p>";
   		}
 
   		else if(cantidad_variables == 3) {
-  			et += "<p>a";
-  			et += i+1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">b";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">c";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">";
-  			et += "<select><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select>";
-  			et += "<input type='numeric' id =";
-  			et += t;
-  			t++;
+  			et += "<p>a<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">b<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">c<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += "><select id =";
+  			et += type_id + i;
+  			et += "><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select><input type='numeric' id =";
+  			et += target_id + i;
   			et += "></p>";
   		}
 
   		else if(cantidad_variables == 4) {
-  			et += "<p>a";
-  			et += i+1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">b";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">c";
-  			et += i + 1;  			
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">d";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">";
-  			et += "<select><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select>";
-  			et += "<input type='numeric' id =";
-  			et += t;
-  			t++;
+  			et += "<p>a<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">b<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">c<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">d<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += "><select id =";
+  			et += type_id + i;
+  			et += "><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select><input type='numeric' id =";
+  			et += target_id + i;
   			et += "></p>";
   		}
 
   		else if(cantidad_variables == 5) {
-  			et += "<p>a";
-  			et += i+1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">b";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">c";
-  			et += i + 1;  			
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">d";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">e";
-  			et += i + 1;
-  			et += "<input type='numeric' id =";
-  			et += id;  			
-  			id++;
-  			et += ">";
-  			et += "<select><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select>";
-  			et += "<input type='numeric' id =";
-  			et += t;
-  			t++;
+  			et += "<p>a<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">b<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">c<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">d<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += ">e<input type='numeric' id =";
+  			et += input_id;
+  			input_id++;
+  			et += "><select id =";
+  			et += type_id + i;
+  			et += "><option value='>='> ≥ </option><option value='<='> ≤ </option><option value='='> = </option>  </select><input type='numeric' id =";
+  			et += target_id + i;
   			et += "></p>";
   		}
   	}

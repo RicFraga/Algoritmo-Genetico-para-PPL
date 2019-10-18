@@ -23,5 +23,4 @@ class population {
 			this.population[i].showBinary();	
 	}
 
-
 }
