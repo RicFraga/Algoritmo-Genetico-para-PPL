@@ -24,6 +24,7 @@ function init() {
 	var fo = new objectiveFunction(values, document.getElementById("objective").value);	
 
 	values = [];
+
 	// Obtenemos las restricciones
 	for(let i = 0; i < cantidad_restricciones; i++) {
 		values = [];
@@ -46,16 +47,20 @@ function init() {
 	var limites = calculateLimits(res);	
 
 	// Generamos la población
-	var poblacion = new population(cantidad_variables, cantidad_individuos, limites);
-	
-	// Evaluamos las restricciones en la población
+	var poblacion = new population(cantidad_variables, cantidad_individuos, limites);		
+
+	for(let i = 0; i < 100; i++) {
+			// calcFintess
+		// Evaluamos las restricciones en la población
 	for(let i = 0; i < cantidad_restricciones; i++) {
 		for(let j = 0; j < cantidad_individuos; j++) {
 			poblacion.population[j].evaluateRest(res[i]);
 		}
 	}
 
-	var best_obtained;	
+	var best_obtained;
+	var ind_best;
+
 
 	if(fo.objective == "Max") {
 		best_obtained = -1;
@@ -70,19 +75,20 @@ function init() {
 			poblacion.population[i].evaluateOF(fo);
 
 			if(fo.objective == "Max") {
-				if(poblacion.population[i].obtained > best_obtained) {					
+				if(poblacion.population[i].obtained > best_obtained) {
+					ind_best = i;
 					best_obtained = poblacion.population[i].obtained;					
 				}
 			}
 
 			else if(fo.objective == "Min") {
-				if(poblacion.population[i].obtained < best_obtained)
+				if(poblacion.population[i].obtained < best_obtained) {
+					ind_best = i;
 					best_obtained = poblacion.population[i].obtained;
-			}			
+				}
+			}
 		}
 	}
-
-	console.log(best_obtained);
 
 	/*  Para calcular la aportación al fitness de cada individuo se revisa si el objetivo de la f.o.
 		es maximizar o minimizar, si se trata de maximizar se toma al especimen que obtuvo la mayor
@@ -90,6 +96,7 @@ function init() {
 		de acuerdo a su valor obtenido de la f.o.
 		Se hace el mismo razonamiento para la minimización pero tomando al menor	
 	*/
+
 	for(let i = 0; i < cantidad_individuos; i++) {
 		if(poblacion.population[i].check == true) {
 			if(fo.objective == "Max") {
@@ -101,18 +108,21 @@ function init() {
 			}
 		}
 	}
-
-	
-
+		poblacion.naturalSelection();
+		poblacion.generate(limites);
+	}
 
 	// Mostramos a la población, el fitness y el valor obtenido de la fo de cada especimen
-	for(let i = 0; i < cantidad_individuos; i++)
+	/*for(let i = 0; i < cantidad_individuos; i++)
 	{
 		poblacion.population[i].show();
 		console.log(poblacion.population[i].getFitness());
 		console.log(poblacion.population[i].getObtained());
 		console.log("--------------------------------------");
-	}
+	}*/
+
+	poblacion.population[ind_best].getObtained();
+	poblacion.population[ind_best].show();
 }
 
 // Esta función se encarga de calcular los límites de generación de números aleatorios

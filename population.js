@@ -20,7 +20,7 @@ class population {
 
 	showBinary() {
 		for(let i = 0; i < this.population.length; i++)
-			this.population[i].showBinary();	
+			this.population[i].showBinary();
 	}
 
 	naturalSelection() {
@@ -35,27 +35,26 @@ class population {
 
 		// Agregamos a la mating pool a los individuos un número de veces de acuerdo a su fitness
 		for(let i = 0; i < this.population.length; i++) {
-			let fitness = map(this.population[i].fitness, 0, best, 0, 1);
-			let n = floor(fitness * 100);
+			//let fitness = map(this.population[i].fitness, 0, best, 0, 1);
+			let fitness = (this.population[i].fitness / best);			
+			let n = Math.floor(fitness * 100);			
 
 			for(let j = 0; j < n; j++)
 				this.matingPool.push(this.population[i]);
-		}
-	}
-
-	generate() {
-		// Rellenamos a la población con elementos de la mating pool
-		for(let i = 0; i < this.population.length; i++) {
-			let a = floor(random(this.matingPool.length));
-      		let b = floor(random(this.matingPool.length));
-
-      		let partnerA = this.matingPool[a];
-      		let partnerB = this.matingPool[b];
-      		let child = partnerA.crossover(partnerB);
-      		child.mutate(this.mutationRate);
-      		this.population[i] = child;
 		}		
 	}
 
+	generate(limits) {
+		// Rellenamos a la población con elementos de la mating pool
+		for(let i = 0; i < this.population.length; i++) {			
+			let a = Math.floor(Math.random(this.matingPool.length));
+      		let b = Math.floor(Math.random(this.matingPool.length));
 
+      		let partnerA = this.matingPool[a];
+      		let partnerB = this.matingPool[b];
+      		let child = partnerA.crossover(partnerB, limits);
+      		child.mutate(this.mutationRate);
+      		this.population[i] = child;
+		}
+	}
 }

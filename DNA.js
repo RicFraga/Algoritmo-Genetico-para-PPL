@@ -70,6 +70,35 @@ class DNA {
 		}		
 	}
 
+	crossover(partner, limits) {
+	
+		// Creamos un nuevo hijo aleatorio
+    	let child = new DNA(this.coeficients, limits);
+
+	    // Tomamos un punto al azar en los genes
+	    let midpoint = Math.floor(Math.random(this.binary.length));
+
+    	// Half from one, half from the other
+    	for (let i = 0; i < this.genes.length; i++) {
+      		if (i > midpoint)
+      			child.genes[i] = this.genes[i];
+      		
+      		else child.genes[i] = partner.genes[i];
+    }
+
+    return child;
+  }
+
+  	// Based on a mutation probability, picks a new random character
+  	mutate(mutationRate) {
+    	for (let i = 0; i < this.genes.length; i++) {
+      		if (Math.random() < mutationRate) {
+      			var a = Math.floor((Math.random() * (1 - 0)) + 0);
+        		this.genes[i] = a;        		
+      		}
+    	}
+  	}
+
 	getFitness() {
 		return this.fitness;
 	}
