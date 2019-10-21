@@ -73,10 +73,10 @@ class DNA {
 	crossover(partner, limits) {
 	
 		// Creamos un nuevo hijo aleatorio
-    	let child = new DNA(this.coeficients, limits);
+    	let child = new DNA(this.genes.length, limits);
 
 	    // Tomamos un punto al azar en los genes
-	    let midpoint = Math.floor(Math.random(this.binary.length));
+	    let midpoint = Math.floor(Math.random(this.binary.length));	    
 
     	// Half from one, half from the other
     	for (let i = 0; i < this.genes.length; i++) {
@@ -84,7 +84,9 @@ class DNA {
       			child.genes[i] = this.genes[i];
       		
       		else child.genes[i] = partner.genes[i];
-    }
+    	}
+
+    // Transformamos el binario a decimal y lo asignamos al DNA
 
     return child;
   }
@@ -93,7 +95,7 @@ class DNA {
   	mutate(mutationRate) {
     	for (let i = 0; i < this.genes.length; i++) {
       		if (Math.random() < mutationRate) {
-      			var a = Math.floor((Math.random() * (1 - 0)) + 0);
+      			var a = Math.floor((Math.random() * (2 - 0)) + 0);
         		this.genes[i] = a;        		
       		}
     	}
