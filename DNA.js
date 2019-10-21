@@ -4,12 +4,11 @@ class DNA {
 		this.binary = [];													// Arreglo donde se guardará el código binario
 		this.fitness = 0;													// Fitness del individuo
 		this.check = false;
-		this.obtained = undefined;
-
+		this.obtained = 0;
 
 		// Generamos los valores con los límites obtenidos de las restricciones
 		for(let i = 0; i < limits.length; i = i + 2)
-			this.genes.push(Math.random() * (limits[i+1]  - limits[i]) + limits[i]);
+			this.genes.push(Math.random() * ((limits[i+1] + 1)  - limits[i]) + limits[i]);
 
 		// Guardamos las representaciones en código binario
 		for(let i = 0; i < this.genes.length; i++)
@@ -17,9 +16,8 @@ class DNA {
 	}
 
 	show() {
-		for(let i = 0; i < this.genes.length; i++) {
-			console.log(i + 1 + " : " + this.genes[i]);
-		}
+		for(let i = 0; i < this.genes.length; i++)
+			console.log(i + 1 + " : " + this.genes[i]);		
 	}
 
 	showBinary() {
@@ -35,8 +33,8 @@ class DNA {
 			for(let i = 0; i < this.genes.length; i++)
 				total += this.genes[i] * restriction.coeficients[i];
 		} catch(error) {
-			console.log("");
-		}
+			console.log(":c");
+		}		
 
 		if(restriction.type == "<=") {
 			if(total <= restriction.target) {
@@ -63,8 +61,7 @@ class DNA {
 	}
 
 	evaluateOF(objectiveFunction) {
-		if(this.check == true) {
-			this.obtained = 0;
+		if(this.check == true) {			
 			for(let i = 0; i < objectiveFunction.coeficients.length; i++) {
 				this.obtained += this.genes[i] * objectiveFunction.coeficients[i];
 			}

@@ -1,4 +1,4 @@
-var generaciones = 100;
+var generaciones;
 var cantidad_individuos;
 var cantidad_restricciones;
 var cantidad_variables;
@@ -7,13 +7,41 @@ var limites;
 var poblacion;
 var res;
 var ind_best;
+var best_obtained;
 
 function init() {
 
+	// Obtenemos toda la información necesaria para el programa
+	getInfo();
+
+	// Calculamos los límites de generación de valores aleatorios de las variables
+	limites = calculateLimits(res);
+
+	console.log(limites);
+
+	// Generamos a la primera población
+	poblacion = new population(cantidad_variables, cantidad_individuos, limites);
+
+	// Toda la magia ocurre aquí
+	for(let i = 0; i < generaciones; i++) {
+		calcFitness();
+		poblacion.naturalSelection();
+		poblacion.generate(limites);
+		
+		poblacion.show();
+		
+		// Mostramos al mejor por generación
+		console.log(poblacion.population[ind_best].getObtained());
+		poblacion.population[ind_best].show();
+	}
+}
+
+function getInfo() {
 	// Obtenemos la cantidad de individuos y de restricciones del documento html
 	cantidad_individuos = parseInt(document.getElementById("pob").value);
 	cantidad_restricciones = parseInt(document.getElementById("rest").value);
 	cantidad_variables = parseInt(document.getElementById("variables").value);
+	generaciones = parseInt(document.getElementById("gen").value);
 
 	res = [];
 	var values = [];
@@ -51,32 +79,7 @@ function init() {
 		target = parseInt((document.getElementById(targ)).value);		
 
 		res.push(new restriction(values, type, target));
-	}
-
-	// Calculamos los límites de generación de valores aleatorios de las variables
-	limites = calculateLimits(res);	
-
-	// Generamos la población
-	poblacion = new population(cantidad_variables, cantidad_individuos, limites);		
-
-	// Toda la magia ocurre aquí
-	for(let i = 0; i < generaciones; i++) {
-		calcFitness();
-		poblacion.naturalSelection();
-		poblacion.generate(limites);
-	}
-
-	// Mostramos a la población, el fitness y el valor obtenido de la fo de cada especimen
-	/*for(let i = 0; i < cantidad_individuos; i++)
-	{
-		poblacion.population[i].show();
-		console.log(poblacion.population[i].getFitness());
-		console.log(poblacion.population[i].getObtained());
-		console.log("--------------------------------------");
-	}*/
-	
-	poblacion.population[ind_best].getObtained();
-	poblacion.population[ind_best].show();
+	}	
 }
 
 // Esta función se encarga de calcular los límites de generación de números aleatorios
@@ -129,15 +132,13 @@ function calculateLimits(restrictions) {
 	return limits;
 }
 
-function calcFitness() {	
+function calcFitness() {
 	// Evaluamos las restricciones en la población
 	for(let i = 0; i < cantidad_restricciones; i++) {
 		for(let j = 0; j < cantidad_individuos; j++) {
 			poblacion.population[j].evaluateRest(res[i]);
 		}
 	}
-
-	var best_obtained;	
 
 	if(fo.objective == "Max") {
 		best_obtained = -1;
