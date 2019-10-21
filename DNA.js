@@ -17,8 +17,9 @@ class DNA {
 	}
 
 	show() {
-		for(let i = 0; i < this.genes.length; i++)
-			console.log(this.genes[i]);
+		for(let i = 0; i < this.genes.length; i++) {
+			console.log(i + 1 + " : " + this.genes[i]);
+		}
 	}
 
 	showBinary() {
@@ -67,38 +68,52 @@ class DNA {
 			for(let i = 0; i < objectiveFunction.coeficients.length; i++) {
 				this.obtained += this.genes[i] * objectiveFunction.coeficients[i];
 			}
-		}		
+		}
 	}
 
 	crossover(partner, limits) {
 	
 		// Creamos un nuevo hijo aleatorio
-    	let child = new DNA(this.genes.length, limits);
+    	var child = new DNA(this.genes.length, limits);
 
-	    // Tomamos un punto al azar en los genes
-	    let midpoint = Math.floor(Math.random(this.binary.length));	    
+    	var midpoint;
+    	var gene;
 
-    	// Half from one, half from the other
-    	for (let i = 0; i < this.genes.length; i++) {
-      		if (i > midpoint)
-      			child.genes[i] = this.genes[i];
-      		
-      		else child.genes[i] = partner.genes[i];
+    	// Mitad de uno y mitad de otro	
+    	for(let i = 0; i < this.binary.length; i++) {
+    		// Tomamos un punto al azar en los genes
+	    	midpoint = Math.floor(Math.random(this.binary[i].length));
+
+	    	gene = "";
+
+	    	for(let j = 0; j < this.binary[i].length; j++) {
+	    		if(j > midpoint)
+	    			gene += this.binary[i][j];
+
+	    		else
+	    			gene += partner.binary[i][j];
+	    	}
+
+	    	child.binary[i] = gene;
+
+	    	// Transformamos el binario a decimal y lo asignamos al DNA
+	    	child.genes[i] = parseInt(child.binary, 2);
     	}
 
-    // Transformamos el binario a decimal y lo asignamos al DNA
-
-    return child;
+    	return child;
   }
 
   	// Based on a mutation probability, picks a new random character
   	mutate(mutationRate) {
-    	for (let i = 0; i < this.genes.length; i++) {
-      		if (Math.random() < mutationRate) {
-      			var a = Math.floor((Math.random() * (2 - 0)) + 0);
-        		this.genes[i] = a;        		
-      		}
-    	}
+  		for(let i = 0; i < this.binary.length; i++) {
+  			for(let j = 0; j < this.binary[i].length; j++) {
+  				if(Math.random() < mutationRate) {
+  					var a = Math.floor((Math.random() * (2 - 0)) + 0);
+  					this.binary[i] = a;
+  					this.genes[i] = parseInt(this.binary[i], 2);
+  				}
+  			}
+  		}  		
   	}
 
 	getFitness() {
